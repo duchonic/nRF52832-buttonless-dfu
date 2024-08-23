@@ -111,6 +111,10 @@ If you would like to test another FW image besides the first one we just uploade
 4.  The DFU process should finsh without any errors, and the DK is now advertising as `Nordic_UART`
 
 
+```
+PS C:\work\nrf52_sandbox> nrfutil pkg generate --application build\nrf52_sandbox.ino.hex 
+--application-version 1 --hw-version 52 --sd-req 0x0124 --key-file nRF52832-buttonless-dfu\private.pem FW_noSD.zip
+```
 
 ## Step 4 – Create a product release image including all components
 When releasing a product, it doesn’t always make sense that you must upload the application through DFU the first time it is installed. You want to upload all components, SD + Bootloader + Settings + Application at the same time probably during production.
