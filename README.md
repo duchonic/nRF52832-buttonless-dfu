@@ -50,6 +50,18 @@ Read through the instructions as provided for the BLE Secure DFU Bootloader on t
 2.	Copy the generated dfu_public_key.c into `C:\nRF5_SDK_15.0.0_a53641a\examples\dfu` folder, replacing the dfu_public_key file that is already in there.
 3.	Install micro-ecc. See infocenter [BLE Secure DFU Bootloader](http://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.0.0/ble_sdk_app_dfu_bootloader.html?cp=4_0_0_4_3_0), and [Installing micro-ecc](http://infocenter.nordicsemi.com/topic/com.nordic.infocenter.sdk5.v15.0.0/lib_crypto_backend_micro_ecc.html?cp=4_0_0_3_11_16_2_2#lib_crypto_backend_micro_ecc_install). When all the tools are installed (armgcc, make, git), you can run the `C:\nRF5_SDK_15.0.0_a53641a\external\micro-ecc\build_all.bat` script to install it
 4.	Compile `C:\nRF5_SDK_15.0.0_a53641a\examples\dfu\secure_bootloader\pca10040_ble\ses\secure_bootloader_ble_s132_pca10040.emProject`, which is the secure BLE bootloader for nRF52832
+4.1 workaround for Segger Studio 7.0 and higher
+    ```
+    look in flash_placement.xml in the ses subdirectory.
+    You should see:
+    <ProgramSection alignment="4" load="Yes" name=".text" size="0x4" />
+    and
+    <ProgramSection alignment="4" load="Yes" name=".rodata" size="0x4" />
+    Remove: size="0x4" from both lines resulting in:
+    <ProgramSection alignment="4" load="Yes" name=".text" />
+    and
+    <ProgramSection alignment="4" load="Yes" name=".rodata" />
+    ```
 5.	Copy the output bootloader .hex from `\Output\Release\Exe\secure_bootloader_ble_s132_pca10040.hex` into the same folder as the tutorial scripts, then rename it `bootloader.hex`
 6.	Program the `s132_nrf52_6.0.0_softdevice.hex`, as well as the `bootloader.hex` to the nRF52832 by running the script `02*.bat`. If you have 2 DKs connected to the PC when you run this script, it will prompt you to select the Serial number of the DK you want to program. Select the Serial number of the device DK that is not used for nRF Connect
 7.	Power cycle the device DK, and it should start up and enter DFU mode and advertise as `DfuTarg`
@@ -71,6 +83,13 @@ To create our own firmware package, we will be using `nrfutil` as we did in step
     3.  We will not be uploading a new bootloader to the device
     4.  We will be requiring hw-version 52
     5.  We will be requiring sd-req 0xA8 as this matches s132 v6.
+        5.1 sd-req for s132 v7.x
+        ```
+        S132 v7.3.0 = 0x0124
+        S132 v7.2.1 = 0x0117
+        S132 v7.2.0 = 0x0101
+        ```
+
     6.  We will be using sd-id 0xA8 as we are uploading the same SD.
     7.  We will be using the private key `private.pem` we generated earlier as input to --key-file
 4.  Once the `FW.zip` is generated, power cycle the device DK and make sure it starts advertising in bootloader mode as DfuTarg. If it does not, go back to the previous step and make sure that works
